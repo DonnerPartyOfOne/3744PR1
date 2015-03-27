@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="borderpane" prefHeight="525.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PR1Controller">
+   <top>
+      <MenuBar fx:id="mb" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem fx:id="fileNew" mnemonicParsing="false" onAction="#newFilePressed" text="New" />
+                  <MenuItem fx:id="fileOpen" mnemonicParsing="false" onAction="#fileOpenPressed" text="Open" />
+              <MenuItem fx:id="fileClose" mnemonicParsing="false" onAction="#fileClosePressed" text="Close" />
+                  <MenuItem fx:id="fileSave" mnemonicParsing="false" onAction="#fileSavePressed" text="Save" />
+                  <MenuItem fx:id="fileQuit" mnemonicParsing="false" onAction="#fileQuitPressed" text="Quit" />
+            </items>
+          </Menu>
+          <Menu fx:id="menuEdit" mnemonicParsing="false" text="Edit">
+            <items>
+                  <MenuItem fx:id="editCopy" mnemonicParsing="false" onAction="#editCopyPressed" text="Copy" />
+                  <MenuItem fx:id="editPaste" mnemonicParsing="false" onAction="#editPastePressed" text="Paste" />
+              <MenuItem fx:id="editDelete" mnemonicParsing="false" onAction="#editDeletePressed" text="Delete" />
+            </items>
+          </Menu>
+          <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem fx:id="about" mnemonicParsing="false" onAction="#HelpAboutPressed" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <SplitPane fx:id="sp" dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <items>
+            <ScrollPane fx:id="scrpaneleft" prefHeight="500.0" prefWidth="291.0">
+               <content>
+                  <Canvas fx:id="canvas" height="690.0" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" width="409.0" />
+               </content>
+            </ScrollPane>
+            <ScrollPane fx:id="scrpaneright" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="291.0">
+               <content>
+                  <TableView fx:id="tv" editable="true" prefHeight="577.0" prefWidth="450.0">
+                    <columns>
+                      <TableColumn fx:id="tcs" prefWidth="75.0" text="Shape" />
+                      <TableColumn fx:id="tccx" prefWidth="75.0" text="Center X" />
+                        <TableColumn fx:id="tccy" prefWidth="75.0" text="Center Y" />
+                        <TableColumn fx:id="tcr" prefWidth="75.0" text="Radius" />
+                        <TableColumn fx:id="tcc" prefWidth="75.0" text="Color" />
+                    </columns>
+                  </TableView>
+               </content>
+            </ScrollPane>
+        </items>
+      </SplitPane>
+   </center>
+</BorderPane>

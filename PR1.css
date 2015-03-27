@@ -1,0 +1,39 @@
+/*
+ * Lecture 7: BOT CSS file.
+ * 
+ * Modified by Collin Blakley as the CSS file for PR1.
+ * 
+ * author: Denis Gracanin
+ * author: Collin Blakley
+ * version: 1
+ */
+
+.root {
+	-fx-background-color: white;
+}
+
+.menu-bar {
+	-fx-background-color: lightblue;
+}
+
+.menu {
+	-fx-background-color: lightblue;
+	-fx-effect: null;	
+}
+
+.menu-item {
+	-fx-background-color: lightblue;		
+	-fx-effect: null;	
+}
+
+.message-dialog, question-dialog, preferences-dialog {
+	-fx-background-color: lightyellow;	
+}
+
+*.text-area {
+	-fx-font-size: 14pt;
+}
+
+*.text-area *.content {
+	-fx-background-color: lightblue;
+}
