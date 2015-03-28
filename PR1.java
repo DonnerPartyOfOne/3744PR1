@@ -56,6 +56,7 @@ public class PR1 extends Application {
 	        PR1cdController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
 	        controller.setShape(shape);
+	        controller.setValues();
 
 	        // Show the dialog.
 	        dialogStage.show();

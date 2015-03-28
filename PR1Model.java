@@ -311,9 +311,7 @@ public class PR1Model {
 		 * @param y The center's y-coordinate.
 		 */
 		public Shape(double x, double y) { 
-			
 			this(x, y, RADIUS_DEFAULT, Color.BLACK, 0, 0, 0, 0, "", ShapeType.CIRCLE); 
-			
 		}
 
 		

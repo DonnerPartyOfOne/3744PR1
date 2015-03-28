@@ -17,6 +17,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,6 +35,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCombination;
@@ -83,7 +85,7 @@ public class PR1Controller extends BorderPane{
     private MenuItem editPaste; // Value injected by FXMLLoader
 
     @FXML // fx:id="tcs"
-    private TableColumn<?, ?> tcs; // Value injected by FXMLLoader
+    private TableColumn<Shape, ShapeType> tcs; // Value injected by FXMLLoader
 
     @FXML // fx:id="borderpane"
     private BorderPane borderpane; // Value injected by FXMLLoader
@@ -209,12 +211,15 @@ public class PR1Controller extends BorderPane{
 		tcr.prefWidthProperty().bind(tv.widthProperty().divide(5));
 		tcc.prefWidthProperty().bind(tv.widthProperty().divide(5));
 	
-		
+		tcs.setCellValueFactory(new PropertyValueFactory<Shape, ShapeType>("type"));
 		tccx.setCellValueFactory(new PropertyValueFactory<Shape, Double>("centerX"));
 		tccy.setCellValueFactory(new PropertyValueFactory<Shape, Double>("centerY"));
 		tcr.setCellValueFactory(new PropertyValueFactory<Shape, Double>("radius"));
 		tcc.setCellValueFactory(new PropertyValueFactory<Shape, Color>("color"));
 		
+		ObservableList<ShapeType> shapeValues = FXCollections.observableArrayList(ShapeType.CIRCLE, ShapeType.RECTANGLE, ShapeType.OVAL, ShapeType.ROUNDRECT, ShapeType.TEXT);
+		
+		tcs.setCellFactory(ComboBoxTableCell.forTableColumn(new PR1Model.ShapeTypeStringConverter(), shapeValues));
 		tccx.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tccy.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tcr.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
@@ -517,8 +522,6 @@ public class PR1Controller extends BorderPane{
     
     @FXML
     void newFilePressed(ActionEvent event) {
-    	System.out.println("new file menu item chosen");
-    	
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Open New File");
 		File f = fileChooser.showSaveDialog(stage);
@@ -631,11 +634,44 @@ public class PR1Controller extends BorderPane{
 	private void repaint() {
 		clear();
 		for (PR1Model.Shape c : m.drawDataProperty()) {
-			drawCircle(c.getCenterX(), c.getCenterY(), c.getRadius(), c.getColor(), false);
+			
+			//TODO refactor drawShape
+			//drawCircle(c.getCenterX(), c.getCenterY(), c.getRadius(), c.getColor(), false);
+			drawShape(c, false);
 		}
 		if (getSelection() != null) {
-			drawCircle(getSelection().getCenterX(), getSelection().getCenterY(), getSelection().getRadius(), getSelection().getColor(), true);
+			drawShape(getSelection(), true);
+			//drawCircle(getSelection().getCenterX(), getSelection().getCenterY(), getSelection().getRadius(), getSelection().getColor(), true);
 		}
+	}
+	
+	
+	/**
+	 * Draws a shape.
+	 * 
+	 * @param s the shape to draw
+	 * @param selection If false, draws the circle, otherwise the selection ring.
+	 */
+	private void drawShape(PR1Model.Shape s, boolean selection) {
+		if(s.getType() == ShapeType.CIRCLE) {
+			double x = s.getCenterX();
+			double y = s.getCenterY();
+			double r = s.getRadius();
+			Color c = s.getColor();
+			if (selection) {
+				gc.setStroke(Color.RED);
+				gc.setLineWidth(3);
+				gc.strokeOval(x - r - 3, y - r - 3, 2 * r + 6, 2 * r + 6);
+			}
+			else {
+				gc.setFill(c);
+				gc.fillOval(x - r, y - r, 2 * r, 2 * r);
+			}
+		}
+		else if (s.getType() == ShapeType.RECTANGLE) {
+			
+		}
+		
 	}
 	
 	private void reTable() {
