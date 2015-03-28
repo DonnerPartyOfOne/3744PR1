@@ -39,7 +39,7 @@
         <items>
             <ScrollPane fx:id="scrpaneleft" prefHeight="500.0" prefWidth="291.0">
                <content>
-                  <Canvas fx:id="canvas" height="690.0" onMouseClicked="#canvasClicked" onMouseDragged="#canvasDragged" onMousePressed="#canvasPressed" width="409.0" />
+                  <Canvas fx:id="canvas" height="690.0" width="409.0" />
                </content>
             </ScrollPane>
             <ScrollPane fx:id="scrpaneright" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="291.0">

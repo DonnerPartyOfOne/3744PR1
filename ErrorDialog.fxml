@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="application.PR1ErrorController">
+   <center>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Application encountered file error " BorderPane.alignment="CENTER" />
+   </center>
+   <bottom>
+      <Button fx:id="ErrorOK" mnemonicParsing="false" onAction="#ErrorOKPressed" text="OK" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>

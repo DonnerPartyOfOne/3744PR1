@@ -21,12 +21,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Menu;
@@ -37,18 +33,14 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
 
@@ -60,7 +52,7 @@ import javafx.util.converter.DoubleStringConverter;
  *
  */
 
-public class PR1Controller {
+public class PR1Controller extends BorderPane{
 	
 	@FXML
 	private ResourceBundle resources;
@@ -139,6 +131,14 @@ public class PR1Controller {
 
     @FXML // fx:id="menuHelp"
     private Menu menuHelp; // Value injected by FXMLLoader
+    
+    
+    private PR1 application;
+    
+    
+    public void setApp(PR1 application){
+        this.application = application;
+    }
 	
 	private Stage stage = null;
 	private PR1Model m = null;
@@ -150,14 +150,6 @@ public class PR1Controller {
 	private ObjectProperty<ClipboardState> clipboardState = null;
 	private ChangeListener<Number> canvasListener = null;
 	private File file = null;
-
-	private static final String ABOUT_TITLE = "About Project 1";
-	private static final String ABOUT_MESSAGE = "Project 1 version 1.";
-	private static final String COLOR_TITLE = "Shape Color";
-	private static final String CSS_FILE = "PR1.css";
-	
-	private static final String CHOICE_TITLE = "File Save";
-	private static final String CHOICE_MESSAGE = "File not saved. Proceed?";
 	
 	private ObjectProperty<HW2Circle> selection = null;
 	
@@ -172,6 +164,7 @@ public class PR1Controller {
 		m = new PR1Model();
 		setFile(null);
 		selection = new SimpleObjectProperty<HW2Circle>();
+		application = new PR1();
 		setSelection(null);
 		setClipboard(null);
 		viewState = new SimpleObjectProperty<ViewState>(ViewState.CLOSE);
@@ -280,7 +273,7 @@ public class PR1Controller {
 							break;
 						case 2:
 							setSelection(m.select(e.getX(), e.getY()));
-							getSelection().setColor(showColorDialog(getSelection().getColor()));
+							application.goToCD(getSelection());
 							viewState.set(ViewState.MODIFIED);
 							break;
 						default:
@@ -377,12 +370,15 @@ public class PR1Controller {
 								viewState.set(ViewState.OPENED);
 							}
 							catch (IOException e) {
-								showMessageDialog("File Error", e.toString());
+								application.goToErrorDialog();
 							}
 						}
 						break;
 					case QUIT: // Quit the application
-						if (oldValue == ViewState.MODIFIED && !showChoiceDialog(CHOICE_TITLE, CHOICE_MESSAGE)) {
+						
+						if (oldValue == ViewState.MODIFIED) {
+							application.goToQuitDialog();
+							//if the application didn't quit, setback the viewState
 							viewState.set(oldValue);
 							break;
 						}
@@ -458,20 +454,6 @@ public class PR1Controller {
 	
 	private void setClipboard(HW2Circle c) { clipboard = c; }
 	
-	/**
-	 * Shows the color dialog.
-	 * 
-	 * @param c The color
-	 * @return The picked color.
-	 */
-	public Color showColorDialog(Color c) {
-		Color color = null;
-		if (c != null) {
-			ColorDialog dialog = new ColorDialog(COLOR_TITLE, c);
-			color = dialog.pick();			
-		}
-		return color;
-	}
 	
 	/**
 	 * Adds the mouse event handler to the canvas.
@@ -486,60 +468,7 @@ public class PR1Controller {
 		canvas.addEventHandler(MouseEvent.MOUSE_MOVED, eh);
 	}
 	
-	/**
-	 * Creates the color dialog.
-	 * 
-	 * @author Denis Gracanin
-	 * @version 1
-	 */
-	public class ColorDialog extends Stage {
-		private Color color;
-
-		/**
-		 * Creates an instance of <code>ColorDialog</code> class.
-		 * 
-		 * @param title The dialog title.
-		 * @param c The dialog color.
-		 */
-		public ColorDialog(String title, Color c) {
-			super();
-			color = c;
-			setTitle(title);
-			setResizable(false);
-			initModality(Modality.APPLICATION_MODAL);
-
-			BorderPane root = new BorderPane();
-			root.getStyleClass().add("color-dialog");
-			ColorPicker colorPicker = new ColorPicker(c);
-			root.setCenter(colorPicker);
-			root.getStyleClass().add("color-dialog");
-			Button okButton = new Button("OK");
-			okButton.setOnAction((e) -> { color = colorPicker.getValue(); close(); });
-			BorderPane.setAlignment(okButton, Pos.CENTER);
-			BorderPane.setMargin(okButton, new Insets(10,10,10,10));
-			root.setBottom(okButton);
-
-			Scene scene = new Scene(root, 200, 150);
-			try {
-				scene.getStylesheets().add(getClass().getResource(CSS_FILE).toExternalForm());
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			setScene(scene);
-		}
-
-		/**
-		 * Returns the color value selected in the color picker.
-		 * 
-		 * @return The selected color value.
-		 */
-		public Color pick() {
-			showAndWait();
-			return color;
-		}
-
-	}
-	
+	@SuppressWarnings("hiding")
 	public class ColorTableCell<HW2Circle> extends TableCell<HW2Circle, Color> {    
 	    private final ColorPicker colorPicker;
 	 
@@ -639,58 +568,9 @@ public class PR1Controller {
 
     @FXML
     void HelpAboutPressed(ActionEvent event) {
-    	showMessageDialog(ABOUT_TITLE, ABOUT_MESSAGE);
+    	application.goToAboutDialog();
     }
     
-    public void showMessageDialog(String title, String message) {
-		MessageDialog dialog = new MessageDialog(title, message);
-		dialog.show();		
-	}
-    
-    /**
-	 * Creates the message dialog.
-	 * 
-	 * @author Denis Gracanin
-	 * @version 1
-	 */
-	public class MessageDialog extends Stage {
-
-		/**
-		 * Creates an instance of <code>MessageDialog</code> class.
-		 * 
-		 * @param title The dialog title.
-		 * @param message The dialog message.
-		 */
-		public MessageDialog(String title, String message) {
-			super();
-			setTitle(title);
-			setResizable(false);
-			initModality(Modality.APPLICATION_MODAL);
-
-			BorderPane root = new BorderPane();
-			root.getStyleClass().add("message-dialog");
-			TextArea messageArea = new TextArea(message);
-			messageArea.setEditable(false);
-			messageArea.setWrapText(true);
-			messageArea.setFocusTraversable(false);
-			root.setCenter(messageArea);
-			root.getStyleClass().add("message-dialog");
-			Button okButton = new Button("OK");
-			okButton.setOnAction((e) ->close());
-			BorderPane.setAlignment(okButton, Pos.CENTER);
-			BorderPane.setMargin(okButton, new Insets(10,10,10,10));
-			root.setBottom(okButton);
-
-			Scene scene = new Scene(root, 200, 150);
-			try {
-				scene.getStylesheets().add(getClass().getResource(CSS_FILE).toExternalForm());
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			setScene(scene);
-		}
-
-	}
 	
 	public void clear() { gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight()); }
 	
@@ -744,9 +624,6 @@ public class PR1Controller {
 		editPaste.setDisable(p);
 		editDelete.setDisable(d);
 	}
-
-	
-	
 	private void repaint() {
 		clear();
 		for (PR1Model.HW2Circle c : m.drawDataProperty()) {
@@ -762,96 +639,12 @@ public class PR1Controller {
 		tv.setItems(circles);		
 	}
 	
-    @FXML
-    void canvasClicked(ActionEvent e) {
-
-    }
-
-    @FXML
-    void canvasDragged(ActionEvent event) {
-
-    }
-
-    @FXML
-    void canvasPressed(ActionEvent event) {
-
-    }
-	
 	public void setFileMenu(boolean n, boolean o, boolean c, boolean s, boolean q) {
 		fileNew.setDisable(n);
 		fileOpen.setDisable(o);
 		fileClose.setDisable(c);
 		fileSave.setDisable(s);
 		fileQuit.setDisable(q);
-	}
-	
-	
-	/**
-	 * Creates the choice dialog.
-	 * 
-	 * @author Denis Gracanin
-	 * @version 1
-	 */
-	public class ChoiceDialog extends Stage {
-		private boolean ok = false;
-
-		/**
-		 * Creates an instance of <code>MessageDialog</code> class.
-		 * 
-		 * @param title The dialog title.
-		 * @param message The dialog message.
-		 */
-		public ChoiceDialog(String title, String message) {
-			super();
-			setTitle(title);
-			setResizable(false);
-			initModality(Modality.APPLICATION_MODAL);
-
-			BorderPane root = new BorderPane();
-			root.getStyleClass().add("choice-dialog");
-			TextArea messageArea = new TextArea(message);
-			messageArea.setEditable(false);
-			messageArea.setWrapText(true);
-			messageArea.setFocusTraversable(false);
-			root.setCenter(messageArea);
-			root.getStyleClass().add("choice-dialog");
-			Button okButton = new Button("OK");
-			okButton.setOnAction((e) -> { ok = true; close(); });
-			Button cancelButton = new Button("Cancel");
-			cancelButton.setOnAction((e) -> { ok = false; close(); });
-			HBox hbox = new HBox(20);
-		    HBox.setHgrow(okButton, Priority.ALWAYS);
-		    HBox.setHgrow(cancelButton, Priority.ALWAYS);
-		    okButton.setMaxWidth(Double.MAX_VALUE);
-		    cancelButton.setMaxWidth(Double.MAX_VALUE);
-			hbox.getChildren().addAll(okButton, cancelButton);
-			BorderPane.setAlignment(hbox, Pos.CENTER);
-			BorderPane.setMargin(hbox, new Insets(10,10,10,10));
-			root.setBottom(hbox);
-
-			Scene scene = new Scene(root, 200, 150);
-			try {
-				scene.getStylesheets().add(getClass().getResource(CSS_FILE).toExternalForm());
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			setScene(scene);
-		}
-
-		/**
-		 * Returns the boolean value.
-		 * 
-		 * @return The boolean.
-		 */
-		public boolean pick() {
-			showAndWait();
-			return ok;
-		}
-
-	}
-	public boolean showChoiceDialog(String title, String message) {
-		ChoiceDialog dialog = new ChoiceDialog(title, message);
-		return dialog.pick();			
 	}
 	
 

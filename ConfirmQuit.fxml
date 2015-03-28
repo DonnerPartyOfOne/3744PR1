@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="application.PR1QuitController">
+   <center>
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="File not saved. Proceed?" BorderPane.alignment="CENTER" />
+   </center>
+   <bottom>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="OKButton" mnemonicParsing="false" onAction="#OKButtonPressed" prefHeight="25.0" prefWidth="64.0" text="OK" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets right="50.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="CancelButton" mnemonicParsing="false" onAction="#CancelButtonPressed" prefHeight="25.0" prefWidth="63.0" text="Cancel" />
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>
