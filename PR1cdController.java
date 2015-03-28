@@ -1,6 +1,6 @@
 package application;
 
-import application.PR1Model.HW2Circle;
+import application.PR1Model.Shape;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -20,7 +20,7 @@ public class PR1cdController extends BorderPane {
     private ColorPicker CDPicker;
     
     private Stage stage;
-    private HW2Circle editShape;
+    private Shape editShape;
     
     @FXML
     private void initialize(){}
@@ -35,8 +35,8 @@ public class PR1cdController extends BorderPane {
 		this.stage = dialogStage;
 	}
 
-	public void setShape(HW2Circle circle) {
-		editShape = circle;
+	public void setShape(Shape shape) {
+		editShape = shape;
 		
 	}
 

@@ -3,7 +3,8 @@ package application;
 import java.io.IOException;
 
 
-import application.PR1Model.HW2Circle;
+
+import application.PR1Model.Shape;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Modality;
@@ -36,7 +37,7 @@ public class PR1 extends Application {
 		
 	}
 	
-	public void goToCD(HW2Circle circle) {
+	public void goToCD(Shape shape) {
 		try {
 	        // Load the fxml file and create a new stage for the popup dialog.
 	        FXMLLoader loader = new FXMLLoader();
@@ -54,7 +55,7 @@ public class PR1 extends Application {
 	        // Set the shape in the controller so it can be modified.
 	        PR1cdController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
-	        controller.setShape(circle);
+	        controller.setShape(shape);
 
 	        // Show the dialog.
 	        dialogStage.show();

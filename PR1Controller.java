@@ -11,7 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ResourceBundle;
 
-import application.PR1Model.HW2Circle;
+import application.PR1Model.Shape;
+import application.PR1Model.ShapeType;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -73,10 +74,10 @@ public class PR1Controller extends BorderPane{
     private Canvas canvas; // Value injected by FXMLLoader
 
     @FXML // fx:id="tv"
-    private TableView<HW2Circle> tv; // Value injected by FXMLLoader
+    private TableView<Shape> tv; // Value injected by FXMLLoader
 
     @FXML // fx:id="tcr"
-    private TableColumn<HW2Circle, Double> tcr; // Value injected by FXMLLoader
+    private TableColumn<Shape, Double> tcr; // Value injected by FXMLLoader
 
     @FXML // fx:id="editPaste"
     private MenuItem editPaste; // Value injected by FXMLLoader
@@ -109,13 +110,13 @@ public class PR1Controller extends BorderPane{
     private MenuItem fileSave; // Value injected by FXMLLoader
 
     @FXML // fx:id="tccx"
-    private TableColumn<HW2Circle, Double> tccx; // Value injected by FXMLLoader
+    private TableColumn<Shape, Double> tccx; // Value injected by FXMLLoader
 
     @FXML // fx:id="tccy"
-    private TableColumn<HW2Circle, Double> tccy; // Value injected by FXMLLoader
+    private TableColumn<Shape, Double> tccy; // Value injected by FXMLLoader
 
     @FXML // fx:id="tcc"
-    private TableColumn<HW2Circle, Color> tcc; // Value injected by FXMLLoader
+    private TableColumn<Shape, Color> tcc; // Value injected by FXMLLoader
 
     @FXML // fx:id="mb"
     private MenuBar mb; // Value injected by FXMLLoader
@@ -151,19 +152,19 @@ public class PR1Controller extends BorderPane{
 	private ChangeListener<Number> canvasListener = null;
 	private File file = null;
 	
-	private ObjectProperty<HW2Circle> selection = null;
+	private ObjectProperty<Shape> selection = null;
 	
 	private double mouseLastX = -1;
 	private double mouseLastY = -1;
 	
-	private HW2Circle clipboard = null;
+	private Shape clipboard = null;
 	
 	
 	@FXML
 	void initialize() {
 		m = new PR1Model();
 		setFile(null);
-		selection = new SimpleObjectProperty<HW2Circle>();
+		selection = new SimpleObjectProperty<Shape>();
 		application = new PR1();
 		setSelection(null);
 		setClipboard(null);
@@ -209,15 +210,15 @@ public class PR1Controller extends BorderPane{
 		tcc.prefWidthProperty().bind(tv.widthProperty().divide(5));
 	
 		
-		tccx.setCellValueFactory(new PropertyValueFactory<HW2Circle, Double>("centerX"));
-		tccy.setCellValueFactory(new PropertyValueFactory<HW2Circle, Double>("centerY"));
-		tcr.setCellValueFactory(new PropertyValueFactory<HW2Circle, Double>("radius"));
-		tcc.setCellValueFactory(new PropertyValueFactory<HW2Circle, Color>("color"));
+		tccx.setCellValueFactory(new PropertyValueFactory<Shape, Double>("centerX"));
+		tccy.setCellValueFactory(new PropertyValueFactory<Shape, Double>("centerY"));
+		tcr.setCellValueFactory(new PropertyValueFactory<Shape, Double>("radius"));
+		tcc.setCellValueFactory(new PropertyValueFactory<Shape, Color>("color"));
 		
 		tccx.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tccy.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tcr.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
-		tcc.setCellFactory(ColorTableCell<HW2Circle>::new);
+		tcc.setCellFactory(ColorTableCell<Shape>::new);
 		
 		scrpaneright.setFitToHeight(true);
 		scrpaneright.setFitToWidth(true);
@@ -284,7 +285,7 @@ public class PR1Controller extends BorderPane{
 			}
 		});
 		
-		m.drawDataProperty().addListener(new ListChangeListener<PR1Model.HW2Circle>() {
+		m.drawDataProperty().addListener(new ListChangeListener<PR1Model.Shape>() {
 
 			/**
 			 * Handles the model changes.
@@ -293,7 +294,7 @@ public class PR1Controller extends BorderPane{
 			 * @param e The event object.
 			 */
 			@Override
-			public void onChanged(ListChangeListener.Change<? extends PR1Model.HW2Circle> e) { 
+			public void onChanged(ListChangeListener.Change<? extends PR1Model.Shape> e) { 
 				
 				repaint(); 
 				reTable();
@@ -362,8 +363,11 @@ public class PR1Controller extends BorderPane{
 							Charset charset = Charset.forName("US-ASCII");
 							try {
 								BufferedWriter writer = Files.newBufferedWriter(file.toPath(), charset, StandardOpenOption.WRITE);
-								for (PR1Model.HW2Circle c : m.drawDataProperty()) {
-									String line = c.getCenterX() + "," +  c.getCenterY() + "," + c.getRadius() + "," +  c.getColor().getRed() + "," + c.getColor().getGreen() + "," + c.getColor().getBlue() + "\n";
+								for (PR1Model.Shape c : m.drawDataProperty()) {
+									
+									//TODO writeback. make a function to do this
+									String line = lineMaker(c);
+									//String line = c.getCenterX() + "," +  c.getCenterY() + "," + c.getRadius() + "," +  c.getColor().getRed() + "," + c.getColor().getGreen() + "," + c.getColor().getBlue() + "\n";
 									writer.write(line);
 								}
 								writer.close();
@@ -405,7 +409,7 @@ public class PR1Controller extends BorderPane{
 			 */
 			@Override
 			public void changed(ObservableValue<? extends ClipboardState> observable, ClipboardState oldValue, ClipboardState newValue) {
-				HW2Circle c = null;
+				Shape c = null;
 				if (getSelection() != null) {
 					switch (newValue) {
 					case COPY: // Copy the selection to the clipboard. 
@@ -444,7 +448,7 @@ public class PR1Controller extends BorderPane{
 	 * 
 	 * @return The content.
 	 */
-	private HW2Circle getClipboard() { return clipboard; }
+	private Shape getClipboard() { return clipboard; }
 
 	/**
 	 * Sets the clipboard's content.
@@ -452,7 +456,7 @@ public class PR1Controller extends BorderPane{
 	 * @param c The content.
 	 */
 	
-	private void setClipboard(HW2Circle c) { clipboard = c; }
+	private void setClipboard(Shape c) { clipboard = c; }
 	
 	
 	/**
@@ -469,15 +473,15 @@ public class PR1Controller extends BorderPane{
 	}
 	
 	@SuppressWarnings("hiding")
-	public class ColorTableCell<HW2Circle> extends TableCell<HW2Circle, Color> {    
+	public class ColorTableCell<Shape> extends TableCell<Shape, Color> {    
 	    private final ColorPicker colorPicker;
 	 
-	    public ColorTableCell(TableColumn<HW2Circle, Color> column) {
+	    public ColorTableCell(TableColumn<Shape, Color> column) {
 		this.colorPicker = new ColorPicker();
 		this.colorPicker.editableProperty().bind(column.editableProperty());
 		this.colorPicker.disableProperty().bind(column.editableProperty().not());
 		this.colorPicker.setOnShowing(event -> {
-		    final TableView<HW2Circle> tableView = getTableView();
+		    final TableView<Shape> tableView = getTableView();
 		    tableView.getSelectionModel().select(getTableRow().getIndex());
 		    tableView.edit(tableView.getSelectionModel().getSelectedIndex(), column);	    
 		});
@@ -600,14 +604,14 @@ public class PR1Controller extends BorderPane{
 	 * 
 	 * @return The selected circle. 
 	 */
-	private PR1Model.HW2Circle getSelection() { return selection.get(); }
+	private PR1Model.Shape getSelection() { return selection.get(); }
 	
 	/**
 	 * Selects a circle.
 	 * 
 	 * @param s The circle to be selected.
 	 */
-	private void setSelection(PR1Model.HW2Circle s) {
+	private void setSelection(PR1Model.Shape s) {
 		selection.set(s);
 		setEditMenu(getSelection() == null, true, getSelection() == null); // Enable the Edit menu items as needed.
 	}
@@ -626,7 +630,7 @@ public class PR1Controller extends BorderPane{
 	}
 	private void repaint() {
 		clear();
-		for (PR1Model.HW2Circle c : m.drawDataProperty()) {
+		for (PR1Model.Shape c : m.drawDataProperty()) {
 			drawCircle(c.getCenterX(), c.getCenterY(), c.getRadius(), c.getColor(), false);
 		}
 		if (getSelection() != null) {
@@ -635,7 +639,7 @@ public class PR1Controller extends BorderPane{
 	}
 	
 	private void reTable() {
-		ObservableList<HW2Circle> circles = m.drawDataProperty();
+		ObservableList<Shape> circles = m.drawDataProperty();
 		tv.setItems(circles);		
 	}
 	
@@ -645,6 +649,32 @@ public class PR1Controller extends BorderPane{
 		fileClose.setDisable(c);
 		fileSave.setDisable(s);
 		fileQuit.setDisable(q);
+	}
+	
+	public String lineMaker(Shape s) {
+		String returnable;
+		ShapeType type = s.getType();
+		if(type == ShapeType.CIRCLE) {
+			returnable = s.getType() + "," + s.getCenterX() + "," +  s.getCenterY() + "," + s.getRadius() + 
+					"," +  s.getColor().getRed() + "," + s.getColor().getGreen() + "," + s.getColor().getBlue() + "\n";
+		}
+		else if ((type == ShapeType.RECTANGLE) || (type == ShapeType.OVAL)) {
+			returnable = s.getType() + "," + s.getCenterX() + "," + s.getCenterY() + "," + s.getWidth() + 
+					"," + s.getHeight() + "," + s.getColor().getRed() + "," + s.getColor().getGreen() + "," + s.getColor().getBlue() + "\n";
+		}
+		else if (type == ShapeType.ROUNDRECT) {
+			returnable = s.getType() + "," + s.getCenterX() + "," + s.getCenterY() + "," + s.getWidth() + 
+					"," + s.getHeight() + "," + s.getAW() + "," + s.getAH() + "," + s.getColor().getRed() + "," + s.getColor().getGreen() + "," + s.getColor().getBlue() + "\n";
+		}
+		else if (type == ShapeType.TEXT) {
+			returnable = s.getType() + "," + s.getCenterX() + "," + s.getCenterY() + "," + s.getColor().getRed() +
+					"," + s.getColor().getGreen() + "," + s.getColor().getBlue() + "," + s.getText() + "\n";
+		}
+		else returnable = s.getType() + "\n";
+		
+		return returnable;
+		
+		
 	}
 	
 
