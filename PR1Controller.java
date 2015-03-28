@@ -425,6 +425,12 @@ public class PR1Controller extends BorderPane{
 						c = m.add(mouseLastX, mouseLastY);
 						c.setRadius(getClipboard().getRadius());
 						c.setColor(getClipboard().getColor());
+						c.setHeight(getClipboard().getHeight());
+						c.setWidth(getClipboard().getWidth());
+						c.setArcheight(getClipboard().getAH());
+						c.setArcwidth(getClipboard().getAW());
+						c.setType(getClipboard().getType());
+						c.setText(getClipboard().getText());
 						viewState.set(ViewState.MODIFIED);
 						break;
 					case DELETE: // delete the selection.

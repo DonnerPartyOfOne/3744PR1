@@ -127,6 +127,25 @@ public class PR1Model {
 					0, new Color(Double.parseDouble(values[5]), Double.parseDouble(values[6]), Double.parseDouble(values[7]), 1),
 					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 0, 0, "", ShapeType.RECTANGLE));
 		}
+		else if (values[0].equals("OVAL")) {
+			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
+					0, new Color(Double.parseDouble(values[5]), Double.parseDouble(values[6]), Double.parseDouble(values[7]), 1),
+					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 0, 0, "", ShapeType.OVAL));
+		}
+		else if (values[0].equals("ROUNDRECT")) {
+			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
+					0, new Color(Double.parseDouble(values[7]), Double.parseDouble(values[8]), Double.parseDouble(values[9]), 1),
+					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 
+					Double.parseDouble(values[5]), Double.parseDouble(values[6]), "", ShapeType.ROUNDRECT));
+		}
+		else if (values[0].equals("TEXT")) {
+			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
+					0, new Color(Double.parseDouble(values[3]), Double.parseDouble(values[4]), Double.parseDouble(values[5]), 1),
+					0, 0, 0, 0, "textex", ShapeType.TEXT));
+		}
+		else{
+			add(new Shape(0, 0, 0, new Color(0, 0, 0, 1), 0, 0, 0, 0, "", ShapeType.UNKNOWN));
+		}
 			
 	
 	}
