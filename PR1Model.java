@@ -45,6 +45,14 @@ public class PR1Model {
 			@Override
 			public void changed( ObservableValue<? extends Color> observable, Color oldValue, Color newValue) { touch(); }		
 		};
+		typeListener = new ChangeListener<ShapeType>() {
+			@Override
+			public void changed(ObservableValue<? extends ShapeType> observable, ShapeType oldValue, ShapeType newValue) { touch(); }
+		};
+		textListener = new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { touch(); }
+		};
 	}
 	
 	/**
@@ -372,9 +380,7 @@ public class PR1Model {
 			type = new SimpleObjectProperty<ShapeType>(this, "type");
 			setType(ty);
 		}
-		
 
-		
 		public ShapeType getType() {
 			return type.get();
 		}

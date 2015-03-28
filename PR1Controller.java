@@ -673,8 +673,6 @@ public class PR1Controller extends BorderPane{
 		else returnable = s.getType() + "\n";
 		
 		return returnable;
-		
-		
 	}
 	
 
