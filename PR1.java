@@ -51,12 +51,12 @@ public class PR1 extends Application {
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-	        // Set the person into the controller.
+	        // Set the shape in the controller so it can be modified.
 	        PR1cdController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
 	        controller.setShape(circle);
 
-	        // Show the dialog and wait until the user closes it
+	        // Show the dialog.
 	        dialogStage.show();
 
 	    } catch (IOException e) {
@@ -79,7 +79,7 @@ public class PR1 extends Application {
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-	        // Set the person into the controller.
+	        // Set the stage in the controller so the dialog can close itself.
 	        PR1AboutController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
 
@@ -105,7 +105,7 @@ public class PR1 extends Application {
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-	        // Set the person into the controller.
+	        // Set the stage in the controller so the dialog can close itself.
 	        PR1AboutController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
 
@@ -131,12 +131,13 @@ public class PR1 extends Application {
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 
-	        // Set the person into the controller.
+	        // Set the stage in the controller so the dialog can close itself.
 	        PR1QuitController controller = loader.getController();
 	        controller.setDialogStage(dialogStage);
 
 	        // Show the dialog and wait until the user closes it
 	        dialogStage.showAndWait();
+	        //if the user clicked ok, exit the entire program.
 	        if(controller.okClicked()) {
 	        	System.exit(0);
 	        }
