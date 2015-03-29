@@ -120,28 +120,28 @@ public class PR1Model {
 		if(values[0].equals("CIRCLE")) {
 			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
 					Double.parseDouble(values[3]), new Color(Double.parseDouble(values[4]), Double.parseDouble(values[5]), Double.parseDouble(values[6]), 1),
-					0, 0, 0, 0, "", ShapeType.CIRCLE));
+					50, 50, 15, 15, "", ShapeType.CIRCLE));
 		}
 		else if (values[0].equals("RECTANGLE")) {
 			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
-					0, new Color(Double.parseDouble(values[5]), Double.parseDouble(values[6]), Double.parseDouble(values[7]), 1),
-					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 0, 0, "", ShapeType.RECTANGLE));
+					50, new Color(Double.parseDouble(values[5]), Double.parseDouble(values[6]), Double.parseDouble(values[7]), 1),
+					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 15, 15, "", ShapeType.RECTANGLE));
 		}
 		else if (values[0].equals("OVAL")) {
 			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
-					0, new Color(Double.parseDouble(values[5]), Double.parseDouble(values[6]), Double.parseDouble(values[7]), 1),
-					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 0, 0, "", ShapeType.OVAL));
+					50, new Color(Double.parseDouble(values[5]), Double.parseDouble(values[6]), Double.parseDouble(values[7]), 1),
+					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 15, 15, "", ShapeType.OVAL));
 		}
 		else if (values[0].equals("ROUNDRECT")) {
 			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
-					0, new Color(Double.parseDouble(values[7]), Double.parseDouble(values[8]), Double.parseDouble(values[9]), 1),
+					50, new Color(Double.parseDouble(values[7]), Double.parseDouble(values[8]), Double.parseDouble(values[9]), 1),
 					Double.parseDouble(values[3]), Double.parseDouble(values[4]), 
 					Double.parseDouble(values[5]), Double.parseDouble(values[6]), "", ShapeType.ROUNDRECT));
 		}
 		else if (values[0].equals("TEXT")) {
 			add(new Shape(Double.parseDouble(values[1]), Double.parseDouble(values[2]),
-					0, new Color(Double.parseDouble(values[3]), Double.parseDouble(values[4]), Double.parseDouble(values[5]), 1),
-					0, 0, 0, 0, "textex", ShapeType.TEXT));
+					50, new Color(Double.parseDouble(values[3]), Double.parseDouble(values[4]), Double.parseDouble(values[5]), 1),
+					50, 50, 15, 15, "textex", ShapeType.TEXT));
 		}
 		else{
 			add(new Shape(0, 0, 0, new Color(0, 0, 0, 1), 0, 0, 0, 0, "", ShapeType.UNKNOWN));
@@ -330,7 +330,7 @@ public class PR1Model {
 		 * @param y The center's y-coordinate.
 		 */
 		public Shape(double x, double y) { 
-			this(x, y, RADIUS_DEFAULT, Color.BLACK, 0, 0, 0, 0, "", ShapeType.CIRCLE); 
+			this(x, y, RADIUS_DEFAULT, Color.BLACK, 50, 50, 15, 15, "", ShapeType.CIRCLE); 
 		}
 
 		
@@ -407,7 +407,7 @@ public class PR1Model {
 		}
 		
 		public double getAH() {
-			return arcwidth.get();
+			return archeight.get();
 		}
 		
 		public double getAW() {
@@ -566,7 +566,16 @@ public class PR1Model {
 		public boolean contains(double x, double y) { 
 			//TODO rework for each shape type
 			
-			return (Math.pow(x - centerX.get(), 2) + Math.pow(y - centerY.get(), 2)) <= Math.pow(radius.get(), 2); 
+			if(type.get() == ShapeType.CIRCLE)
+				return (Math.pow(x - centerX.get(), 2) + Math.pow(y - centerY.get(), 2)) <= Math.pow(radius.get(), 2); 
+			else if (type.get() == ShapeType.RECTANGLE || type.get() == ShapeType.ROUNDRECT || type.get() == ShapeType.OVAL) {
+				return ((x >= getCenterX() - getWidth()/2) && (x <= getCenterX() + getWidth()/2) && (y >= getCenterY() - getHeight()/2) && (y <= getCenterY() + getHeight()/2));
+			}
+			else if (type.get() == ShapeType.TEXT) {
+				return ((x >= getCenterX() - getHeight()*.43*getText().length()/2) && (x <= getCenterX() + getHeight()*.43*getText().length()/2) && (y >= getCenterY() - getHeight()/2) && (y <= getCenterY() + getHeight()/2));
+			}
+			else
+				return false;
 			
 		}
 

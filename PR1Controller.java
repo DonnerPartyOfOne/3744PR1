@@ -43,6 +43,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
@@ -135,6 +136,21 @@ public class PR1Controller extends BorderPane{
     @FXML // fx:id="menuHelp"
     private Menu menuHelp; // Value injected by FXMLLoader
     
+    @FXML 
+    private TableColumn<Shape, Double> tcw;
+    
+    @FXML
+    private TableColumn<Shape, Double> tch;
+    
+    @FXML
+    private TableColumn<Shape, Double> tcaw;
+    
+    @FXML
+    private TableColumn<Shape, Double> tcah;
+    
+    @FXML
+    private TableColumn<Shape, String> tct;
+    
     
     private PR1 application;
     
@@ -205,17 +221,27 @@ public class PR1Controller extends BorderPane{
 		canvas.widthProperty().addListener(canvasListener);
 		
 		
-		tcs.prefWidthProperty().bind(tv.widthProperty().divide(5));
-		tccx.prefWidthProperty().bind(tv.widthProperty().divide(5));
-		tccy.prefWidthProperty().bind(tv.widthProperty().divide(5));
-		tcr.prefWidthProperty().bind(tv.widthProperty().divide(5));
-		tcc.prefWidthProperty().bind(tv.widthProperty().divide(5));
-	
+		tcs.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tccx.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tccy.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tcr.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tcc.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tcw.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tch.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tcaw.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tcah.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tct.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		
 		tcs.setCellValueFactory(new PropertyValueFactory<Shape, ShapeType>("type"));
 		tccx.setCellValueFactory(new PropertyValueFactory<Shape, Double>("centerX"));
 		tccy.setCellValueFactory(new PropertyValueFactory<Shape, Double>("centerY"));
 		tcr.setCellValueFactory(new PropertyValueFactory<Shape, Double>("radius"));
 		tcc.setCellValueFactory(new PropertyValueFactory<Shape, Color>("color"));
+		tcw.setCellValueFactory(new PropertyValueFactory<Shape, Double>("width"));
+		tch.setCellValueFactory(new PropertyValueFactory<Shape, Double>("height"));
+		tcaw.setCellValueFactory(new PropertyValueFactory<Shape, Double>("arcWidth"));
+		tcah.setCellValueFactory(new PropertyValueFactory<Shape, Double>("arcHeight"));
+		tct.setCellValueFactory(new PropertyValueFactory<Shape, String>("text"));
 		
 		ObservableList<ShapeType> shapeValues = FXCollections.observableArrayList(ShapeType.CIRCLE, ShapeType.RECTANGLE, ShapeType.OVAL, ShapeType.ROUNDRECT, ShapeType.TEXT);
 		
@@ -223,6 +249,14 @@ public class PR1Controller extends BorderPane{
 		tccx.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tccy.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tcr.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		
+		tcw.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		tch.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		tcaw.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		tcah.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		
+		tct.setCellFactory(TextFieldTableCell.forTableColumn());
+		
 		tcc.setCellFactory(ColorTableCell<Shape>::new);
 		
 		scrpaneright.setFitToHeight(true);
@@ -303,6 +337,7 @@ public class PR1Controller extends BorderPane{
 				
 				repaint(); 
 				reTable();
+				viewState.set(ViewState.MODIFIED);
 				
 			}
 		});
@@ -659,23 +694,62 @@ public class PR1Controller extends BorderPane{
 	 * @param selection If false, draws the circle, otherwise the selection ring.
 	 */
 	private void drawShape(PR1Model.Shape s, boolean selection) {
+		double x = s.getCenterX();
+		double y = s.getCenterY();
+		double r = s.getRadius();
+		Color c = s.getColor();
+		double w = s.getWidth();
+		double h = s.getHeight();
+		double aw = s.getAW();
+		double ah = s.getAH();
+		String t = s.getText();
+		if(selection) {
+			gc.setStroke(Color.RED);
+			gc.setLineWidth(3);
+		} else {
+			gc.setFill(c);
+		}
 		if(s.getType() == ShapeType.CIRCLE) {
-			double x = s.getCenterX();
-			double y = s.getCenterY();
-			double r = s.getRadius();
-			Color c = s.getColor();
 			if (selection) {
-				gc.setStroke(Color.RED);
-				gc.setLineWidth(3);
 				gc.strokeOval(x - r - 3, y - r - 3, 2 * r + 6, 2 * r + 6);
 			}
 			else {
-				gc.setFill(c);
 				gc.fillOval(x - r, y - r, 2 * r, 2 * r);
 			}
 		}
 		else if (s.getType() == ShapeType.RECTANGLE) {
-			
+			if (selection) {
+				gc.strokeRect(x - w/2 - 3, y - h/2 - 3, w + 6, h + 6);
+			}
+			else {
+				gc.fillRect(x- w/2, y-h/2, w, h);
+			}
+		}
+		else if (s.getType() == ShapeType.OVAL) {
+			if (selection) {
+				gc.strokeOval(x - w/2 - 3, y - h/2 - 3, w + 6, h + 6);
+			}
+			else {
+				gc.fillOval(x - w/2, y - h/2, w, h);
+			}
+		}
+		else if (s.getType() == ShapeType.ROUNDRECT) {
+			if (selection) {
+				gc.strokeRoundRect(x - w/2 - 3, y - h/2 - 3, 
+						w + 6, h + 6, aw, ah);
+			}
+			else {
+				gc.fillRoundRect(x - w/2, y - h/2, w, h, aw, ah);
+			}
+		}
+		else if (s.getType() == ShapeType.TEXT) {
+			if(selection) {
+				gc.strokeRect(x - h*.43*t.length()/2 - 3, y - h/2 + 3, h*.43*t.length(), h + 10);
+			}
+			else {
+				gc.setFont(new Font("Courier", h));
+				gc.fillText(t, x - (h*.43*t.length())/2, y + h/2);
+			}
 		}
 		
 	}

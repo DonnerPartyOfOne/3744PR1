@@ -56,13 +56,14 @@ public class PR1cdController extends BorderPane {
     
     @FXML
     private void initialize() {
-    	typeBox.getItems().addAll("circle", "oval", "rectangle", "roundrect", "text");
+    	typeBox.getItems().addAll("circle", "oval", "rect", "roundrect", "text");
     	
     	//TODO bind the boxes to relevant values
     }
     
     public void setValues() {
     	ShapeTypeStringConverter convert = new ShapeTypeStringConverter();
+    	CDPicker.setValue(editShape.getColor());
     	typeBox.setValue(convert.toString(editShape.getType()));
     	xPosBox.setText(Double.toString(editShape.getCenterX()));
     	yPosBox.setText(Double.toString(editShape.getCenterY()));
@@ -78,7 +79,7 @@ public class PR1cdController extends BorderPane {
     void colorChosen(ActionEvent event) {
 		editShape.setColor(CDPicker.getValue());
 		if(typeBox.getValue().equals("circle")) editShape.setType(ShapeType.CIRCLE);
-		else if (typeBox.getValue().equals("rectangle")) editShape.setType(ShapeType.RECTANGLE);
+		else if (typeBox.getValue().equals("rect")) editShape.setType(ShapeType.RECTANGLE);
 		else if (typeBox.getValue().equals("oval")) editShape.setType(ShapeType.OVAL);
 		else if (typeBox.getValue().equals("roundrect")) editShape.setType(ShapeType.ROUNDRECT);
 		else if (typeBox.getValue().equals("text")) editShape.setType(ShapeType.TEXT);
@@ -92,7 +93,6 @@ public class PR1cdController extends BorderPane {
 		editShape.setArcwidth(Double.parseDouble(awBox.getText()));
 		editShape.setArcheight(Double.parseDouble(ahBox.getText()));
 		editShape.setText(tBox.getText());
-		
 		stage.close();
     }
 

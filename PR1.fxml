@@ -51,6 +51,11 @@
                         <TableColumn fx:id="tccy" prefWidth="75.0" text="Center Y" />
                         <TableColumn fx:id="tcr" prefWidth="75.0" text="Radius" />
                         <TableColumn fx:id="tcc" prefWidth="75.0" text="Color" />
+                        <TableColumn fx:id="tcw" prefWidth="75.0" text="Width" />
+                        <TableColumn fx:id="tch" prefWidth="75.0" text="Height/Font" />
+                        <TableColumn fx:id="tcaw" prefWidth="75.0" text="ArcWidth" />
+                        <TableColumn fx:id="tcah" prefWidth="75.0" text="ArcHeight" />
+                        <TableColumn fx:id="tct" prefWidth="75.0" text="Text" />
                     </columns>
                   </TableView>
                </content>
