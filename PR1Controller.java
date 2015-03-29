@@ -38,7 +38,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -204,15 +203,7 @@ public class PR1Controller extends BorderPane{
 			}
 		};
 		
-		
-		fileNew.setAccelerator(KeyCombination.keyCombination("Ctrl+N"));
-		fileOpen.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
-		fileClose.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
-		fileSave.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
-		fileQuit.setAccelerator(KeyCombination.keyCombination("Ctrl+Q"));
-		editCopy.setAccelerator(KeyCombination.keyCombination("Ctrl+C"));
-		editPaste.setAccelerator(KeyCombination.keyCombination("Ctrl+V"));
-		editDelete.setAccelerator(KeyCombination.keyCombination("Ctrl+X"));
+
 		
 		gc = canvas.getGraphicsContext2D();
 		canvas.heightProperty().set(1105);
@@ -404,10 +395,8 @@ public class PR1Controller extends BorderPane{
 							try {
 								BufferedWriter writer = Files.newBufferedWriter(file.toPath(), charset, StandardOpenOption.WRITE);
 								for (PR1Model.Shape c : m.drawDataProperty()) {
-									
-									//TODO writeback. make a function to do this
+
 									String line = lineMaker(c);
-									//String line = c.getCenterX() + "," +  c.getCenterY() + "," + c.getRadius() + "," +  c.getColor().getRed() + "," + c.getColor().getGreen() + "," + c.getColor().getBlue() + "\n";
 									writer.write(line);
 								}
 								writer.close();
@@ -675,14 +664,10 @@ public class PR1Controller extends BorderPane{
 	private void repaint() {
 		clear();
 		for (PR1Model.Shape c : m.drawDataProperty()) {
-			
-			//TODO refactor drawShape
-			//drawCircle(c.getCenterX(), c.getCenterY(), c.getRadius(), c.getColor(), false);
 			drawShape(c, false);
 		}
 		if (getSelection() != null) {
 			drawShape(getSelection(), true);
-			//drawCircle(getSelection().getCenterX(), getSelection().getCenterY(), getSelection().getRadius(), getSelection().getColor(), true);
 		}
 	}
 	
