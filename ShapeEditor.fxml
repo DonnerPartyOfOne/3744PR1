@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane fx:id="CDborderpane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PR1cdController">
+<BorderPane fx:id="CDborderpane" style="-fx-background-color: lightyellow;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cs3744.pr1.PR1cdController">
    <bottom>
       <Button fx:id="CDokbutton" mnemonicParsing="false" onAction="#colorChosen" onMouseClicked="#colorChosen" text="OK" BorderPane.alignment="CENTER" />
    </bottom>

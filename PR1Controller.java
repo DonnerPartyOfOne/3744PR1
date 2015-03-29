@@ -1,4 +1,4 @@
-package application;
+package cs3744.pr1;
 
 
 import java.io.BufferedReader;
@@ -11,8 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ResourceBundle;
 
-import application.PR1Model.Shape;
-import application.PR1Model.ShapeType;
+import cs3744.pr1.PR1Model.Shape;
+import cs3744.pr1.PR1Model.ShapeType;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -35,6 +35,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -51,7 +52,7 @@ import javafx.util.converter.DoubleStringConverter;
  * Project 1 controller class. Gets values for all the GUI elements injected
  * by the FXMLLoader.
  * 
- * @author Collin
+ * @author Collin Blakley
  *
  */
 
@@ -150,10 +151,22 @@ public class PR1Controller extends BorderPane{
     @FXML
     private TableColumn<Shape, String> tct;
     
+    @FXML
+    private TableColumn<Shape, Boolean> tcd;
+    
+    @FXML
+    private MenuItem zIn;
+    
+    @FXML
+    private MenuItem zOut;
+    
     
     private PR1 application;
     
-    
+    /**
+     * Sets the application so we can pass off to other controllers
+     * @param application
+     */
     public void setApp(PR1 application){
         this.application = application;
     }
@@ -175,8 +188,16 @@ public class PR1Controller extends BorderPane{
 	private double mouseLastY = -1;
 	
 	private Shape clipboard = null;
+	private Shape defaultS = null;
+	private static final String defaultshape = "DEFAULT SHAPE";
 	
-	
+	/**
+	 * Initialize is called when the FXML is loaded. set up all our default values,
+	 * resizing, bindings, cell factories, event handlers, etc.
+	 * 
+	 * 	 
+	 * 
+	 * */
 	@FXML
 	void initialize() {
 		m = new PR1Model();
@@ -187,6 +208,8 @@ public class PR1Controller extends BorderPane{
 		setClipboard(null);
 		viewState = new SimpleObjectProperty<ViewState>(ViewState.CLOSE);
 		clipboardState = new SimpleObjectProperty<ClipboardState>(ClipboardState.IDLE);
+		defaultS = m.add(-50, -50);
+		defaultS.setText(defaultshape);
 		
 		
 		canvasListener = new ChangeListener<Number>() {
@@ -212,16 +235,17 @@ public class PR1Controller extends BorderPane{
 		canvas.widthProperty().addListener(canvasListener);
 		
 		
-		tcs.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tccx.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tccy.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tcr.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tcc.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tcw.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tch.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tcaw.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tcah.prefWidthProperty().bind(tv.widthProperty().divide(10));
-		tct.prefWidthProperty().bind(tv.widthProperty().divide(10));
+		tcs.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tccx.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tccy.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tcr.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tcc.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tcw.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tch.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tcaw.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tcah.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tct.prefWidthProperty().bind(tv.widthProperty().divide(11));
+		tcd.prefWidthProperty().bind(tv.widthProperty().divide(11));
 		
 		tcs.setCellValueFactory(new PropertyValueFactory<Shape, ShapeType>("type"));
 		tccx.setCellValueFactory(new PropertyValueFactory<Shape, Double>("centerX"));
@@ -233,6 +257,7 @@ public class PR1Controller extends BorderPane{
 		tcaw.setCellValueFactory(new PropertyValueFactory<Shape, Double>("arcWidth"));
 		tcah.setCellValueFactory(new PropertyValueFactory<Shape, Double>("arcHeight"));
 		tct.setCellValueFactory(new PropertyValueFactory<Shape, String>("text"));
+		tcd.setCellValueFactory(new PropertyValueFactory<Shape, Boolean>("delete"));
 		
 		ObservableList<ShapeType> shapeValues = FXCollections.observableArrayList(ShapeType.CIRCLE, ShapeType.RECTANGLE, ShapeType.OVAL, ShapeType.ROUNDRECT, ShapeType.TEXT);
 		
@@ -245,6 +270,8 @@ public class PR1Controller extends BorderPane{
 		tch.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tcaw.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
 		tcah.setCellFactory(TextFieldTableCell.forTableColumn(new DoubleStringConverter()));
+		
+		tcd.setCellFactory(CheckBoxTableCell.forTableColumn(tcd));
 		
 		tct.setCellFactory(TextFieldTableCell.forTableColumn());
 		
@@ -288,7 +315,13 @@ public class PR1Controller extends BorderPane{
 							viewState.set(ViewState.MODIFIED);
 						}
 						else if (e.getButton() == MouseButton.SECONDARY) {
-							getSelection().setRadius(getSelection().getRadius() + 0.25 * (e.getX() - getSelection().getCenterX()));
+							if(getSelection().getType() == ShapeType.CIRCLE) {
+								getSelection().setRadius(getSelection().getRadius() + 0.25 * (e.getX() - getSelection().getCenterX()));
+							}
+							else {
+								getSelection().setWidth(getSelection().getWidth() + 0.25 * (e.getX() - getSelection().getCenterX()));
+								getSelection().setHeight(getSelection().getHeight() + 0.25 * (e.getY() - getSelection().getCenterY()));
+							}
 							viewState.set(ViewState.MODIFIED);
 						}
 					}
@@ -298,7 +331,7 @@ public class PR1Controller extends BorderPane{
 						switch (e.getClickCount()) {
 						case 1:
 							if (getSelection() == null) {
-								setSelection(m.add(e.getX(), e.getY()));
+								setSelection(m.add(defaultS.getType(), e.getX(), e.getY()));
 							}
 							viewState.set(ViewState.MODIFIED);
 							break;
@@ -395,7 +428,8 @@ public class PR1Controller extends BorderPane{
 							try {
 								BufferedWriter writer = Files.newBufferedWriter(file.toPath(), charset, StandardOpenOption.WRITE);
 								for (PR1Model.Shape c : m.drawDataProperty()) {
-
+									//For the project, the line needs to be created in a more complicated way than before,
+									//so the work is passed off to a function here.
 									String line = lineMaker(c);
 									writer.write(line);
 								}
@@ -507,6 +541,17 @@ public class PR1Controller extends BorderPane{
 		canvas.addEventHandler(MouseEvent.MOUSE_MOVED, eh);
 	}
 	
+	/**
+	 * This class is the colorpicker in the table cell. It needed
+	 * to be custom since there is no direct way to do this in the JFX libraries.
+	 * Thanks to Michael Simmons for the basis of this code.
+	 * http://info.michael-simons.eu/2014/10/27/custom-editor-components-in-javafx-tablecells/
+	 * 
+	 * @author Michael Simmons
+	 * @modified by Collin Blakley
+	 *
+	 * @param <Shape>
+	 */
 	@SuppressWarnings("hiding")
 	public class ColorTableCell<Shape> extends TableCell<Shape, Color> {    
 	    private final ColorPicker colorPicker;
@@ -549,6 +594,32 @@ public class PR1Controller extends BorderPane{
 	 */
 	public void setFile(File f) { file = f; }
 	
+	/**
+	 * function called when the accelerated menu item to zoom in is pressed.
+	 * @param event
+	 */
+    @FXML
+    void zInPressed(ActionEvent event) {
+		canvas.setScaleX(canvas.getScaleX()*1.1);
+		canvas.setScaleY(canvas.getScaleY()*1.1);
+    }
+    
+    /**
+     * function called when the accelerated menu item to zoom out is pressed.
+     * @param event
+     */
+
+    @FXML
+    void zOutPressed(ActionEvent event) {
+		canvas.setScaleX(canvas.getScaleX()*0.9);
+		canvas.setScaleY(canvas.getScaleY()*0.9);
+    }
+    
+    /**
+     * function called when "New" is pressed from the file menu.
+     * opens a file chooser and allows the user to select the parameters of the file.
+     * @param event
+     */
     
     @FXML
     void newFilePressed(ActionEvent event) {
@@ -562,6 +633,11 @@ public class PR1Controller extends BorderPane{
 
     }
 
+    /**
+     * function called when "Open" is pressed from the file menu.
+     * opens a file chooser and allows the user to select the file to open.
+     * @param event
+     */
     @FXML
     void fileOpenPressed(ActionEvent event) {
     	FileChooser fileChooser = new FileChooser();
@@ -573,6 +649,12 @@ public class PR1Controller extends BorderPane{
 		}
     }
 
+    /**
+     * function called when "Close" is pressed from the file menu.
+     * The FXML-imported functions following this all do mostly the same thing,
+     * they simply set the view state so the main logic knows what to do when.
+     * @param event
+     */
     @FXML
     void fileClosePressed(ActionEvent event) {
     	viewState.set(ViewState.CLOSE);
@@ -608,29 +690,11 @@ public class PR1Controller extends BorderPane{
     	application.goToAboutDialog();
     }
     
-	
+	/**
+	 * Clears the canvas.
+	 */
 	public void clear() { gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight()); }
 	
-	/**
-	 * Draws a circle.
-	 * 
-	 * @param x The x-coordinate of the center of the circle.
-	 * @param y The y-coordinate of the center of the circle.
-	 * @param r The radius of the circle
-	 * @param c The color of the circle.
-	 * @param selection If true, draws the circle, otherwise the selection ring.
-	 */
-	public void drawCircle(double x, double y, double r, Color c, boolean selection) {
-		if (selection) {
-			gc.setStroke(Color.RED);
-			gc.setLineWidth(3);
-			gc.strokeOval(x - r - 3, y - r - 3, 2 * r + 6, 2 * r + 6);
-		}
-		else {
-			gc.setFill(c);
-			gc.fillOval(x - r, y - r, 2 * r, 2 * r);
-		}
-	}
 	
 	/**
 	 * Gets the selected circle.
@@ -661,10 +725,16 @@ public class PR1Controller extends BorderPane{
 		editPaste.setDisable(p);
 		editDelete.setDisable(d);
 	}
+	
+	/**
+	 * repaints the entire canvas. Loops through the shape list in the model
+	 * and draws each.
+	 */
 	private void repaint() {
 		clear();
 		for (PR1Model.Shape c : m.drawDataProperty()) {
-			drawShape(c, false);
+			if(!c.getText().equals(defaultshape))
+				drawShape(c, false);
 		}
 		if (getSelection() != null) {
 			drawShape(getSelection(), true);
@@ -673,12 +743,17 @@ public class PR1Controller extends BorderPane{
 	
 	
 	/**
-	 * Draws a shape.
+	 * Draws a shape. Because this is being called whenever a change is made,
+	 * here I remove the shape from the model if it is marked for deletion.
 	 * 
 	 * @param s the shape to draw
 	 * @param selection If false, draws the circle, otherwise the selection ring.
 	 */
 	private void drawShape(PR1Model.Shape s, boolean selection) {
+		if(s.getDelete()) {
+			m.remove(s);
+			return;
+		}
 		double x = s.getCenterX();
 		double y = s.getCenterY();
 		double r = s.getRadius();
@@ -739,11 +814,22 @@ public class PR1Controller extends BorderPane{
 		
 	}
 	
+	/**
+	 * Renews the information in the table.
+	 */
 	private void reTable() {
 		ObservableList<Shape> circles = m.drawDataProperty();
 		tv.setItems(circles);		
 	}
 	
+	/**
+	 * Function to easily disable/enable file menu items.
+	 * @param n new
+	 * @param o open
+	 * @param c close
+	 * @param s save
+	 * @param q quit
+	 */
 	public void setFileMenu(boolean n, boolean o, boolean c, boolean s, boolean q) {
 		fileNew.setDisable(n);
 		fileOpen.setDisable(o);
@@ -752,6 +838,11 @@ public class PR1Controller extends BorderPane{
 		fileQuit.setDisable(q);
 	}
 	
+	/**
+	 * function to writeback changes made to the file. 
+	 * @param s the shape to writeback to the file.
+	 * @return
+	 */
 	public String lineMaker(Shape s) {
 		String returnable;
 		ShapeType type = s.getType();

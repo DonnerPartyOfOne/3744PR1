@@ -1,7 +1,9 @@
-package application;
+package cs3744.pr1;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,10 +16,11 @@ import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 
 /**
- * Homework 2 model class.
+ * Project 1 model class.
  * Stores a collection of shapes.
  * 
  * @author Denis Gracanin
+ * @modified by Collin Blakley
  * @version 1
  */
 public class PR1Model {
@@ -26,6 +29,8 @@ public class PR1Model {
 	private ChangeListener<Color> colorListener = null; // A listener to the changes in the shape's <code>ObjecProperty<Color></code> properties.
 	private ChangeListener<ShapeType> typeListener = null;
 	private ChangeListener<String> textListener = null;
+	private ChangeListener<Boolean> deleteListener = null;
+	private static final String defaultshape = "DEFAULT SHAPE";
 
 	/**
 	 * Creates an instance of <code>HW2Model</code> class with no data.
@@ -52,6 +57,10 @@ public class PR1Model {
 		textListener = new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) { touch(); }
+		};
+		deleteListener = new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) { touch(); }
 		};
 	}
 	
@@ -83,7 +92,7 @@ public class PR1Model {
 	public Shape select(double x, double y) {
 		Shape selection = null;
 		for (Shape o : drawData) {
-			if (o.contains(x, y)) {
+			if (o.contains(x, y) && !o.getText().equals(defaultshape)) {
 				selection = o;
 			}
 		}
@@ -104,13 +113,11 @@ public class PR1Model {
 			}
 		}
 	}
-	
-	//TODO possibly need new add functions
 
 	/**
 	 * Adds a shape to the model.
 	 * 
-	 * @param s The string (a comma-separated list of six values: <code>x, y, radius, red, green, blue</code>).
+	 * @param s The string (a comma-separated list of a variable number of values.).
 	 */
 	public void add(String s) { 
 		
@@ -149,6 +156,22 @@ public class PR1Model {
 			
 	
 	}
+	
+	/**
+	 * adds a shape to the list.
+	 * This function was needed so that default values could be
+	 * provided by the user in the GUI and applied to new shapes.
+	 * @param t the shape type.
+	 * @param x x-coord center of the shape.
+	 * @param y y-coord center of the shape.
+	 * @return
+	 */
+	public Shape add(ShapeType t, double x, double y) {
+		Shape c = new Shape(x, y);
+		c.setType(t);
+		add(c);
+		return c;
+	}
 
 	/**
 	 * Adds a shape to the model.
@@ -163,10 +186,8 @@ public class PR1Model {
 		return c;
 	}
 	
-	//TODO modify to add new listeners
-	
 	/**
-	 * Adds a shape to the model.
+	 * Adds a shape to the model and sets up all the listeners.
 	 * 
 	 * @param c The shape
 	 */
@@ -181,13 +202,12 @@ public class PR1Model {
 		c.arcHeightProperty().addListener(doubleListener);
 		c.textProperty().addListener(textListener);
 		c.typeProperty().addListener(typeListener);
+		c.deleteProperty().addListener(deleteListener);
 		drawData.add(c);
 	}
 	
-	//TODO remove new listeners
-	
 	/**
-	 * Removes a shape from the model.
+	 * Removes a shape from the model and removes all listeners.
 	 * 
 	 * @param c The shape.
 	 */
@@ -202,6 +222,7 @@ public class PR1Model {
 		c.arcHeightProperty().removeListener(doubleListener);
 		c.textProperty().removeListener(textListener);
 		c.typeProperty().removeListener(typeListener);
+		c.deleteProperty().removeListener(deleteListener);
 		drawData.remove(c);
 	}
 	
@@ -210,8 +231,19 @@ public class PR1Model {
 	 */
 	public void clear() { drawData.clear(); }
 	
+	/**
+	 * This enum represents the various types of shapes that can be drawn to the canvas.
+	 * @author Collin
+	 *
+	 */
 	public enum ShapeType { RECTANGLE, CIRCLE, OVAL, ROUNDRECT, TEXT, UNKNOWN }
 	
+	/**
+	 * This string converter is necessary to intelligently populate the type
+	 * field in the table view.
+	 * @author Collin
+	 *
+	 */
 	public static class ShapeTypeStringConverter extends StringConverter<ShapeType> {
 		public String toString(ShapeType s) {
 			if(s == ShapeType.RECTANGLE) {
@@ -271,6 +303,15 @@ public class PR1Model {
 		private DoubleProperty archeight = null;
 		private StringProperty text = null;
 		private ObjectProperty<ShapeType> type = null;
+		private BooleanProperty delete = null;
+		
+		public static final double WIDTH_MIN = 10;
+		
+		public static final double HEIGHT_MIN = 10;
+		
+		public static final double WIDTH_MAX = 500;
+		
+		public static final double HEIGHT_MAX = 500;
 		/**
 		 * Minimum shape's radius value.
 		 */
@@ -333,28 +374,6 @@ public class PR1Model {
 			this(x, y, RADIUS_DEFAULT, Color.BLACK, 50, 50, 15, 15, "", ShapeType.CIRCLE); 
 		}
 
-		
-		/**
-		 * Creates an instance of <code>Shape</code> class.
-		 * 
-		 * @param t The string (a comma-separated list of six numeric values: <code>x, y, radius, red, green, blue</code>).
-		 * @throws NumberFormatException One (or more) values is not numeric.
-		 * @throws ArrayIndexOutOfBoundsException Less than six values in the string.
-		 */
-		/*
-		 * 
-		public Shape(String[] t) throws NumberFormatException, ArrayIndexOutOfBoundsException { 
-			
-			if(t[0] == "circle") {
-				this(Double.parseDouble(t[1]), Double.parseDouble(t[2]), Double.parseDouble(t[3]), new Color(Double.parseDouble(t[4]), Double.parseDouble(t[5]), Double.parseDouble(t[6]), 1), ShapeType.CIRCLE);
-			}
-			
-			this(Double.parseDouble(t[1]), Double.parseDouble(t[2]), Double.parseDouble(t[3]), new Color(Double.parseDouble(t[4]), Double.parseDouble(t[5]), Double.parseDouble(t[6]), 1), ShapeType.CIRCLE);
-			
-			
-			
-		}
-		*/
 
 		/**
 		 * Creates an instance of <code>Shape</code> class.
@@ -374,6 +393,12 @@ public class PR1Model {
 		 * @param y The center's y-coordinate.
 		 * @param r The radius.
 		 * @param c The color.
+		 * @param w The width.
+		 * @param h The height.
+		 * @param aw The arcwidth.
+		 * @param ah The archeight.
+		 * @param t The text.
+		 * @param ty The type of shape.
 		 */
 		public Shape(double x, double y, double r, Color c, double w, double h, double aw, double ah, String t, ShapeType ty) {
 			centerX = new SimpleDoubleProperty(this, "CenterX");
@@ -396,56 +421,128 @@ public class PR1Model {
 			setText(t);
 			type = new SimpleObjectProperty<ShapeType>(this, "type");
 			setType(ty);
+			delete = new SimpleBooleanProperty(this, "delete");
+			setDelete(false);
+		}
+		
+		
+		/**
+		 * Get the status of the delete boolean.
+		 * @return
+		 */
+		public boolean getDelete() {
+			return delete.get();
+		}
+		
+		/**
+		 * set the delete boolean.
+		 * @param d
+		 */
+		public void setDelete(boolean d) {
+			delete.set(d);
 		}
 
+		/**
+		 * get the ShapeType associated with this shape.
+		 * @return
+		 */
 		public ShapeType getType() {
 			return type.get();
 		}
 		
+		/**
+		 * get the text stored in this shape.
+		 * @return
+		 */
 		public String getText() {
 			return text.get();
 		}
 		
+		/**
+		 * get the archeight stored in this shape.
+		 * @return
+		 */
 		public double getAH() {
 			return archeight.get();
 		}
 		
+		/**
+		 * get the arcwidth stored in this shape.
+		 * @return
+		 */
 		public double getAW() {
 			return arcwidth.get();
 		}
 		
+		/**
+		 * get the height of this shape.
+		 * @return
+		 */
 		public double getHeight() {
 			return height.get();
 		}
 		
+		/**
+		 * get the width of this shape.
+		 * @return
+		 */
 		public double getWidth() {
 			return width.get();
 		}
 		
+		/**
+		 * set the type of this shape.
+		 * @param ty the shape type.
+		 */
 		public void setType(ShapeType ty) {
 			type.set(ty);
 		}
 		
+		/**
+		 * set the text of this shape.
+		 * @param t The text.
+		 */
 		public void setText(String t) {
 			text.set(t);
 		}
 		
+		/**
+		 * set the archeight of this shape.
+		 * @param ah the archeight.
+		 */
 		public void setArcheight(double ah) {
 			archeight.set(ah);
 		}
 		
+		/**
+		 * set the arcwidth of this shape.
+		 * @param aw the arcwidth.
+		 */
 		public void setArcwidth(double aw) {
 			arcwidth.set(aw);
 		}
 		
+		/**
+		 * set the height of this shape.
+		 * @param h the height.
+		 */
 		public void setHeight(double h) {
-			height.set(h);
+			height.set(clamp(h, HEIGHT_MIN, HEIGHT_MAX));
 		}
 		
+		/**
+		 * set the width of this shape.
+		 * @param w the width.
+		 */
 		public void setWidth(double w) {
-			width.set(w);
+			width.set(clamp(w, WIDTH_MIN, WIDTH_MAX));
 		}
 		
+		/**
+		 * Each of the following methods return the properties
+		 * associated with this shape.
+		 * @return Properties.
+		 */
 		public ObjectProperty<ShapeType> typeProperty() {
 			return type;
 		}
@@ -468,6 +565,10 @@ public class PR1Model {
 		
 		public DoubleProperty widthProperty() {
 			return width;
+		}
+		
+		public BooleanProperty deleteProperty() {
+			return delete;
 		}
 
 		/**
@@ -564,7 +665,6 @@ public class PR1Model {
 		 * @return <code>true</code> if the point is contained, <code>false</code> otherwise.
 		 */
 		public boolean contains(double x, double y) { 
-			//TODO rework for each shape type
 			
 			if(type.get() == ShapeType.CIRCLE)
 				return (Math.pow(x - centerX.get(), 2) + Math.pow(y - centerY.get(), 2)) <= Math.pow(radius.get(), 2); 

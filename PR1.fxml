@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane fx:id="borderpane" prefHeight="525.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PR1Controller">
+<BorderPane fx:id="borderpane" prefHeight="525.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cs3744.pr1.PR1Controller">
    <top>
       <MenuBar fx:id="mb" BorderPane.alignment="CENTER">
         <menus>
@@ -33,6 +33,16 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
+                  <MenuItem fx:id="zIn" mnemonicParsing="false" onAction="#zInPressed" text="Zoom In" visible="false">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="UP" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="zOut" mnemonicParsing="false" onAction="#zOutPressed" text="Zoom Out" visible="false">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DOWN" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
             </items>
           </Menu>
           <Menu fx:id="menuEdit" mnemonicParsing="false" text="Edit">
@@ -81,6 +91,7 @@
                         <TableColumn fx:id="tcaw" prefWidth="75.0" text="ArcWidth" />
                         <TableColumn fx:id="tcah" prefWidth="75.0" text="ArcHeight" />
                         <TableColumn fx:id="tct" prefWidth="75.0" text="Text" />
+                        <TableColumn fx:id="tcd" prefWidth="75.0" text="Delete" />
                     </columns>
                   </TableView>
                </content>

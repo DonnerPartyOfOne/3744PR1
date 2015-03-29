@@ -1,8 +1,8 @@
-package application;
+package cs3744.pr1;
 
-import application.PR1Model.Shape;
-import application.PR1Model.ShapeType;
-import application.PR1Model.ShapeTypeStringConverter;
+import cs3744.pr1.PR1Model.Shape;
+import cs3744.pr1.PR1Model.ShapeType;
+import cs3744.pr1.PR1Model.ShapeTypeStringConverter;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,6 +12,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+
+/**
+ * Shape Editor controller class.
+ * @author Collin Blakley
+ *
+ */
 public class PR1cdController extends BorderPane {
 	
 	
@@ -54,13 +60,20 @@ public class PR1cdController extends BorderPane {
     private Stage stage;
     private Shape editShape;
     
+    /**
+     * Initialize is called when the FXML loads.
+     * It adds the possible shape types to the box
+     * so the user can see their options.
+     */
     @FXML
     private void initialize() {
     	typeBox.getItems().addAll("circle", "oval", "rect", "roundrect", "text");
-    	
-    	//TODO bind the boxes to relevant values
     }
     
+    /**
+     * This function sets the option boxes in the GUI to their 
+     * corresponding values already set in the model.
+     */
     public void setValues() {
     	ShapeTypeStringConverter convert = new ShapeTypeStringConverter();
     	CDPicker.setValue(editShape.getColor());
@@ -75,6 +88,11 @@ public class PR1cdController extends BorderPane {
     	tBox.setText(editShape.getText());
     }
 	
+    /**
+     * This function applies all the changed parameters in the dialog
+     * to the shape that was passed to this controller.
+     * @param event
+     */
 	@FXML
     void colorChosen(ActionEvent event) {
 		editShape.setColor(CDPicker.getValue());
@@ -96,10 +114,18 @@ public class PR1cdController extends BorderPane {
 		stage.close();
     }
 
+	/**
+	 * sets the stage for this dialog.
+	 * @param dialogStage
+	 */
 	public void setDialogStage(Stage dialogStage) {
 		this.stage = dialogStage;
 	}
 
+	
+	/**
+	 * sets the shape to be edited by this dialog.
+	 */
 	public void setShape(Shape shape) {
 		editShape = shape;
 		

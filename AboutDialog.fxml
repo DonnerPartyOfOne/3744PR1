@@ -6,8 +6,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="application.PR1AboutController">
+<BorderPane id="message-dialog" style="-fx-background-color: lightyellow;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cs3744.pr1.PR1AboutController">
    <center>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Project 1 Version 1" BorderPane.alignment="CENTER" />
    </center>

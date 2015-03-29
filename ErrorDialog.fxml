@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="application.PR1ErrorController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="cs3744.pr1.PR1ErrorController">
    <center>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Application encountered file error " BorderPane.alignment="CENTER" />
    </center>
