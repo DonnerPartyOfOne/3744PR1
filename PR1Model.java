@@ -66,8 +66,22 @@ public class PR1Model {
 	
 	/**
 	 * Generates a list event.
+	 * When we touch the file because something has changed,
+	 * also iterate over the list of shapes to see if any
+	 * are marked for deletion. Before touching the list,
+	 * remove that shape.
 	 */
 	private void touch() {
+		int toDelete = -1;
+		for(int i = 0; i < drawData.size(); i++) {
+			if(drawData.get(i).getDelete()){
+				toDelete = i;
+			}
+		}
+		if(toDelete >= 0) {
+			remove(drawData.get(toDelete));
+			return;
+		}
 		if (drawData.size() > 0) {
 			Shape o = drawData.get(0);
 			drawData.remove(0);

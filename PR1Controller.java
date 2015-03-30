@@ -743,17 +743,12 @@ public class PR1Controller extends BorderPane{
 	
 	
 	/**
-	 * Draws a shape. Because this is being called whenever a change is made,
-	 * here I remove the shape from the model if it is marked for deletion.
+	 * Draws a shape. 
 	 * 
 	 * @param s the shape to draw
 	 * @param selection If false, draws the circle, otherwise the selection ring.
 	 */
 	private void drawShape(PR1Model.Shape s, boolean selection) {
-		if(s.getDelete()) {
-			m.remove(s);
-			return;
-		}
 		double x = s.getCenterX();
 		double y = s.getCenterY();
 		double r = s.getRadius();
